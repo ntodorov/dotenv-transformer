@@ -11,7 +11,7 @@
     "dotenv-transformer": "index.js"
   },
   "author": "Nik Todorov",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@azure/identity": "^4.0.1",
     "@azure/keyvault-secrets": "^4.7.0",

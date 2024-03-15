@@ -23,7 +23,7 @@ program
     'the name of the environment we are deploying to'
   )
   .requiredOption(
-    '-df, --dotenvFolder < the folder containing the .env files>',
+    '-df, --dotenvFolder <paht to the .env.?? files>',
     'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
   )
   .requiredOption('-s, --service <service name>', 'the name of the service')
