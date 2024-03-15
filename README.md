@@ -11,13 +11,27 @@ If you provide a KeyVault name, it will check if the secrets exist in it.
 
 ## Installation
 
-You can install dotenv-transformer using npm:
+No installation needed - using npx :
 
 ```bash
-npm install dotenv-transformer
+npx dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
+```
+
+or you can install it globaly using npm:
+
+```bash
+npm install dotenv-transformer -g
 ```
 
 ## Usage
+
+if not installed:
+
+```bash
+npx dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
+```
+
+else:
 
 ```bash
 dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
