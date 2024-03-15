@@ -35,8 +35,7 @@ program
   )
   .option(
     '-stg, --stagingFolder <staging folder>',
-    'a staging folder for the yaml files generation, before they are copied to the destination folder.',
-    process.cwd()
+    'a staging folder for the yaml files generation, before they are copied to the destination folder.'
   )
   .option(
     '-skv, --skipKV',
@@ -62,7 +61,11 @@ const run = async () => {
   console.log('dotenvFolder', dotenvFolder);
   const destinationPath = options.destinationPath;
   console.log('destinationPath', destinationPath);
-  const stagingFolder = options.stagingFolder;
+  let stagingFolder = options.stagingFolder;
+  if (!stagingFolder) {
+    stagingFolder = path.join(process.cwd(), 'tmp');
+    fs.mkdirSync(stagingFolder, { recursive: true });
+  }
   console.log('stagingFolder', stagingFolder);
 
   //validate the paths
