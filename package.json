@@ -20,5 +20,24 @@
     "dotenv-expand": "^11.0.6",
     "js-yaml": "^4.1.0",
     "json2csv": "^6.0.0-alpha.2"
+  },
+  "keywords": [
+    "dotenv-transformer",
+    "dotenv",
+    "environment variables",
+    "deployment",
+    "kubernetes",
+    "ARGO",
+    "CD tools",
+    "Azure KeyVault",
+    "GitOps CLI"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ntodorov/dotenv-transformer"
+  },
+  "homepage": "https://github.com/ntodorov/dotenv-transformer#readme",
+  "bugs": {
+    "url": "https://github.com/ntodorov/dotenv-transformer/issues"
   }
 }
