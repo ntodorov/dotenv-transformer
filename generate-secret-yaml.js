@@ -43,11 +43,13 @@ const generateSecretsYaml = (secrets, keyVault, stagingFolder) => {
 
   const allDocs = k8sSecrets.join('---\n');
 
-  // Write the YAML to a file
-  const secretYamlFile = path.join(stagingFolder, 'secret.yaml');
-  fs.writeFileSync(secretYamlFile, allDocs, 'utf8');
+  // // Write the YAML to a file
+  // const secretYamlFile = path.join(stagingFolder, 'secret.yaml');
+  // fs.writeFileSync(secretYamlFile, allDocs, 'utf8');
 
-  console.log(`Generated Kubernetes secret YAML file at ${secretYamlFile}`);
+  // console.log(`Generated Kubernetes secret YAML file at ${secretYamlFile}`);
+
+  return allDocs;
 };
 
 module.exports = { generateSecretsYaml };

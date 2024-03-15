@@ -1,16 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-function validatePaths(dotenvFolder, destinationPath, stagingFolder) {
+function validatePaths(dotenvFolder, destinationPath) {
   const errors = [];
   if (!fs.existsSync(dotenvFolder))
     errors.push(`Dotenv folder "${dotenvFolder}" does not exist!`);
 
   if (!fs.existsSync(destinationPath))
     errors.push(`Destination folder "${destinationPath}" does not exist!`);
-
-  if (!fs.existsSync(stagingFolder))
-    errors.push(`Staging folder "${stagingFolder}" does not exist!`);
 
   if (errors.length > 0) throw new Error(errors.join('\n'));
 }

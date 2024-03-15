@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const { Command, Option } = require('commander');
 const path = require('path');
-const yaml = require('js-yaml');
 const fs = require('fs');
 
 const dotenv = require('dotenv');
@@ -16,7 +15,7 @@ const program = new Command();
 program
   .name('dotenv-transformer')
   .description(
-    'Will get the env vars from .env.deploy and will create secrets.yaml and custom-env.yaml and will check if they exist in a given KeyVault.'
+    '"dotenv-transformer" will read the env vars from .env.deploy and will create secrets.yaml and custom-env.yaml. If you provide KeyVault name will check if the secrets exist in it.'
   )
   .version('1.0.0')
   .requiredOption(
@@ -28,18 +27,13 @@ program
     'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
   )
   .requiredOption('-s, --service <service name>', 'the name of the service')
-  .requiredOption('-kv, --keyvault <Key Vault>', 'the name of the Key Vault')
   .requiredOption(
     '-d, --destinationPath <destination path>',
     'full folder name to save the yaml files'
   )
   .option(
-    '-stg, --stagingFolder <staging folder>',
-    'a staging folder for the yaml files generation, before they are copied to the destination folder.'
-  )
-  .option(
-    '-skv, --skipKV',
-    'skip the key vault check, useful for local development, when the secrets are not in the key vault.'
+    '-kv, --keyvault <Key Vault>',
+    '(optional) Name of Key Vault to check if the secrets exist'
   );
 
 program.parse();
@@ -61,15 +55,9 @@ const run = async () => {
   console.log('dotenvFolder', dotenvFolder);
   const destinationPath = options.destinationPath;
   console.log('destinationPath', destinationPath);
-  let stagingFolder = options.stagingFolder;
-  if (!stagingFolder) {
-    stagingFolder = path.join(process.cwd(), 'tmp');
-    fs.mkdirSync(stagingFolder, { recursive: true });
-  }
-  console.log('stagingFolder', stagingFolder);
 
   //validate the paths
-  validatePaths(dotenvFolder, destinationPath, stagingFolder);
+  validatePaths(dotenvFolder, destinationPath);
 
   let dotenvCommon = {};
   console.log('Checking if common ".env.deploy" file exists...');
@@ -120,15 +108,20 @@ const run = async () => {
   const secrets = extractSecrets(finalEnv);
   console.log('secrets', secrets);
 
-  if (options.skipKV) {
-    console.log('Skipping Key Vault check... --skipKV flag is set to true.');
-  } else await keyVaultValidation(secrets, keyVault);
+  if (keyVault) await keyVaultValidation(secrets, keyVault);
 
-  generateSecretsYaml(secrets, keyVault, stagingFolder);
-  generateCustomEnvYaml(finalEnv, serviceName, stagingFolder);
+  // first generate in memory the YAML files
+  const secretYamlDocs = generateSecretsYaml(secrets, keyVault);
+  const customEnvYamlDocs = generateCustomEnvYaml(finalEnv, serviceName);
 
-  const fileNames = ['secret.yaml', 'custom-env.yaml'];
-  copyFiles(stagingFolder, destinationPath, fileNames);
+  //Now write both YAML files
+  const secretYamlFile = path.join(destinationPath, 'secret.yaml');
+  fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
+  console.log(`Generated Kubernetes file ${secretYamlFile}`);
+  const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');
+  fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
+  console.log(`Generated Kubernetes file ${customEnvYAMLFile}`);
+
   console.log('Done!');
 };
 

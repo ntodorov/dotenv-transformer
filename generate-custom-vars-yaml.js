@@ -47,11 +47,7 @@ const generateCustomEnvYaml = (envVars, serviceName, stagingFolder) => {
 
   const customEnvYAML = yaml.dump(COMMON_YAML);
 
-  // Write the YAML to a file
-  const fileName = path.join(stagingFolder, 'custom-env.yaml');
-  fs.writeFileSync(fileName, customEnvYAML, 'utf8');
-
-  console.log(`Generated Kubernetes custom-env.yaml file at ${fileName}`);
+  return customEnvYAML;
 };
 
 module.exports = { generateCustomEnvYaml };
