@@ -68,11 +68,10 @@ async function gen() {
   }
 
   console.log('envContent', envContent);
-  if (options.forADO) {
-    const dotEnvBuild = path.join(process.cwd(), `.env.build`);
-    fs.writeFileSync(dotEnvBuild, envContent);
-    console.log(`File "${dotEnvBuild}" created!`);
-  }
+
+  const dotEnvBuild = path.join(process.cwd(), `.env.build`);
+  fs.writeFileSync(dotEnvBuild, envContent);
+  console.log(`File "${dotEnvBuild}" created!`);
 
   return envContent;
 }

@@ -6,15 +6,17 @@
 
 ## Description
 
-The `dotenv-transformer` is a command-line utility that reads environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files.
+The `dotenv-transformer` is a command-line interface for transforming .env files for different needs, mostly used in devops pipelines.
+It has commands as `gen` that will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files.
 If you provide a KeyVault name, it will check if the secrets exist in it.
+And command `extract` that will read `.env.deploy` and some specific `.env.dev` etc with overrides and produce final `.env.build` that can be used in the build process - specificaly passing them to docker build task as `--build-arg` parameters.
 
 ## Installation
 
 No installation needed - using npx :
 
 ```bash
-npx dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
+npx dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> -kv <Key Vault> [-skv]
 ```
 
 or you can install it globaly using npm:
@@ -28,19 +30,31 @@ npm install dotenv-transformer -g
 if not installed:
 
 ```bash
-npx dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
+npx dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> -kv <Key Vault> [--skipKV]
 ```
 
 else:
 
 ```bash
-dotenv-transformer -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> [-kv <Key Vault>]
+dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> -kv <Key Vault> [--skipKV]
 ```
 
-### Options
+### Commands & Options
+
+#### Command `gen`
+
+##### options
 
 - `-e, --env <environment name>`: The name of the environment we are deploying to (required)
 - `-df, --dotenvFolder <path to the .env.?? files>`: Path to the folder containing .env.deploy file and/or .env. specific files (required)
 - `-s, --service <service name>`: The name of the service (required)
 - `-d, --destinationPath <destination path>`: Full folder name to save the yaml files (required)
-- `-kv, --keyvault <Key Vault>`: (Optional) Name of Key Vault to check if the secrets exist in it
+- `-kv, --keyvault <Key Vault>`: Key Vault Name needed for secret.yaml and to check if the secrets exist in it
+- `-skv, --skipKV`: (optional) If you want to skip checking if the secrets exist in the Key Vault
+
+#### Command `extract`
+
+##### options
+
+- `-e, --env <environment name>`: The name of the environment we are deploying to (required)
+- `-df, --dotenvFolder <path to the .env.?? files>`: Path to the folder containing .env.deploy file and/or .env. specific files (required)

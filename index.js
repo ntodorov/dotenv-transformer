@@ -50,10 +50,6 @@ program
     '-df, --dotenvFolder <paht to the .env.?? files>',
     'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
   )
-  .option(
-    '-ado, --forADO',
-    '(optional) if provided will output the variables in the format for Azure DevOps'
-  )
   .action(require('./src/actions/extract'));
 
 program.parse();
