@@ -13,6 +13,8 @@ function gen() {
 
   const dotenvFolder = options.dotenvFolder;
   console.log('dotenvFolder', dotenvFolder);
+  const outputFile = options.outputFile;
+  console.log('outputFile', outputFile);
 
   const finalEnv = dotenvPrep(dotenvFolder, currentEnv);
 
@@ -24,9 +26,8 @@ function gen() {
 
   console.log('envContent', envContent);
 
-  const dotEnvBuild = path.join(process.cwd(), `.env.build`);
-  fs.writeFileSync(dotEnvBuild, envContent);
-  console.log(`File "${dotEnvBuild}" created!`);
+  fs.writeFileSync(outputFile, envContent);
+  console.log(`File "${outputFile}" created!`);
 
   return envContent;
 }

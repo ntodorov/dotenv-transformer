@@ -7,16 +7,18 @@
 ## Description
 
 The `dotenv-transformer` is a command-line interface for transforming .env files for different needs, mostly used in devops pipelines.
-It has commands as `gen` that will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files.
-If you provide a KeyVault name, it will check if the secrets exist in it.
-And command `extract` that will read `.env.deploy` and some specific `.env.dev` etc with overrides and produce final `.env.build` that can be used in the build process - specificaly passing them to docker build task as `--build-arg` parameters.
+It has coommands:
+
+- `gen` - will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files. If you provide a KeyVault name, it will check if the secrets exist in it.
+
+- `extract` - will read `.env.deploy` and some specific `.env.<env>` filled with overrides and produce final `.env.build` that can be used in the build process - specificaly passing them to docker build task as `--build-arg` parameters.
 
 ## Installation
 
 No installation needed - using npx :
 
 ```bash
-npx dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s <service name> -d <destination path> -kv <Key Vault> [-skv]
+npx dotenv-transformer gen -e <environment name> -df <path to the .env.??? files> -s <service name> -d <destination path> -kv <Key Vault> [-skv]
 ```
 
 or you can install it globaly using npm:
@@ -58,3 +60,4 @@ dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s 
 
 - `-e, --env <environment name>`: The name of the environment we are deploying to (required)
 - `-df, --dotenvFolder <path to the .env.?? files>`: Path to the folder containing .env.deploy file and/or .env. specific files (required)
+- `-o, --outputFile <file name with path>`: file name with path to save the interpolated environment variables - defalut: .env.build in current folder

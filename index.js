@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const { Command } = require('commander');
+const path = require('path');
 
 const packageJson = require('./package.json');
 
@@ -49,6 +50,11 @@ program
   .requiredOption(
     '-df, --dotenvFolder <paht to the .env.?? files>',
     'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
+  )
+  .requiredOption(
+    '-o, --outputFile <file name with path>',
+    'file name with path to save the interpolated environment variables - defalut is .env.build in current folder',
+    path.join(process.cwd(), '.env.build') //default value
   )
   .action(require('./src/actions/extract'));
 
