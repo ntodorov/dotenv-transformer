@@ -4,7 +4,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 
-function dotenvPrep() {
+function dotenvPrep(dotenvFolder, currentEnv) {
   if (!fs.existsSync(dotenvFolder)) {
     console.error(`Dotenv folder "${dotenvFolder}" does not exist!`);
     process.exit(1);

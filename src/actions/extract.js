@@ -14,7 +14,7 @@ function gen() {
   const dotenvFolder = options.dotenvFolder;
   console.log('dotenvFolder', dotenvFolder);
 
-  const finalEnv = dotenvPrep(options);
+  const finalEnv = dotenvPrep(dotenvFolder, currentEnv);
 
   let envContent = '';
   for (let key in finalEnv) {

@@ -23,7 +23,7 @@ async function gen() {
   const destinationPath = options.destinationPath;
   console.log('destinationPath', destinationPath);
 
-  const finalEnv = dotenvPrep(options);
+  const finalEnv = dotenvPrep(dotenvFolder, currentEnv);
 
   const secrets = extractSecrets(finalEnv);
   console.log('secrets', secrets);
