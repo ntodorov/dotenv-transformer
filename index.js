@@ -6,6 +6,8 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 
+const packageJson = require('./package.json');
+
 const { validatePaths, copyFiles } = require('./src/utils');
 const { generateSecretsYaml } = require('./generate-secret-yaml');
 const { generateCustomEnvYaml } = require('./generate-custom-vars-yaml');
@@ -13,11 +15,9 @@ const { keyVaultValidation, extractSecrets } = require('./src/secrets');
 
 const program = new Command();
 program
-  .name('dotenv-transformer')
-  .description(
-    '"dotenv-transformer" will read the env vars from .env.deploy and will create secrets.yaml and custom-env.yaml. If you provide KeyVault name will check if the secrets exist in it.'
-  )
-  .version('1.0.0')
+  .name(packageJson.name)
+  .description(packageJson.description)
+  .version(packageJson.version)
   .requiredOption(
     '-e, --env <environment name>',
     'the name of the environment we are deploying to'
@@ -31,9 +31,13 @@ program
     '-d, --destinationPath <destination path>',
     'full folder name to save the yaml files'
   )
-  .option(
+  .requiredOption(
     '-kv, --keyvault <Key Vault>',
-    '(optional) Name of Key Vault to check if the secrets exist'
+    'Key Vault name to be used in for secret.yaml, and to check if the secrets exist'
+  )
+  .option(
+    '-skv, --skipKV',
+    '(optional) if provided will skip the check for the secrets in the Key Vault'
   );
 
 program.parse();
@@ -108,7 +112,8 @@ const run = async () => {
   const secrets = extractSecrets(finalEnv);
   console.log('secrets', secrets);
 
-  if (keyVault) await keyVaultValidation(secrets, keyVault);
+  //skip if skipKV is provided
+  if (!options.skipKV) await keyVaultValidation(secrets, keyVault);
 
   // first generate in memory the YAML files
   const secretYamlDocs = generateSecretsYaml(secrets, keyVault);
