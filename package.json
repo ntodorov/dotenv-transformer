@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "bin": {
     "dotenv-transformer": "index.js"
@@ -39,5 +39,8 @@
   "homepage": "https://github.com/ntodorov/dotenv-transformer#readme",
   "bugs": {
     "url": "https://github.com/ntodorov/dotenv-transformer/issues"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
