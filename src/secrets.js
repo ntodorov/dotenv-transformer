@@ -25,6 +25,17 @@ const checkSecrets = async (secrets, keyVaultName) => {
   return missingSecrets;
 };
 
+const getSecretValue = async (secret, keyVaultName) => {
+  const keyVaultUrl = `https://${keyVaultName}.vault.azure.net`;
+
+  const credential = new DefaultAzureCredential();
+  const client = new SecretClient(keyVaultUrl, credential);
+
+  const secretValue = await client.getSecret(secret);
+
+  return secretValue.value;
+};
+
 async function keyVaultValidation(secrets, keyVault) {
   console.log(`Validating if secrets exist in KeyVault ${keyVault}`);
   const missingSecrets = await checkSecrets(secrets, keyVault);
@@ -53,4 +64,9 @@ const extractSecrets = (envVars) => {
   return secrets;
 };
 
-module.exports = { checkSecrets, keyVaultValidation, extractSecrets };
+module.exports = {
+  checkSecrets,
+  keyVaultValidation,
+  extractSecrets,
+  getSecretValue,
+};

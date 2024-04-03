@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { dotenvPrep } = require('../dotenv-prep');
 
-function gen() {
+function extract() {
   const options = this.opts();
 
   //this is important for interpolating the env vars in the .env.deploy file
@@ -32,4 +32,4 @@ function gen() {
   return envContent;
 }
 
-module.exports = gen;
+module.exports = extract;
