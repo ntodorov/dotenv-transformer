@@ -52,7 +52,7 @@ dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s 
 - `-s, --service <service name>`: The name of the service (required)
 - `-d, --destinationPath <destination path>`: Full folder name to save the yaml files (required)
 - `-kv, --keyvault <Key Vault>`: Key Vault Name needed for secret.yaml and to check if the secrets exist in it
-- `-skv, --skipKV`: (optional) If you want to skip checking if the secrets exist in the Key Vault
+- `-skv, --skipKV`: (optional) If you want to skip checking for secrets existance in the Key Vault
 
 #### Command `extract`
 
@@ -61,3 +61,4 @@ dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s 
 - `-e, --env <environment name>`: The name of the environment we are deploying to (required)
 - `-df, --dotenvFolder <path to the .env.?? files>`: Path to the folder containing .env.deploy file and/or .env. specific files (required)
 - `-o, --outputFile <file name with path>`: file name with path to save the interpolated environment variables - defalut: .env.build in current folder
+- `-kv, --keyvault <Key Vault>`: (optional) Key Vault Name - if provided the tool will get the secret values from it.
