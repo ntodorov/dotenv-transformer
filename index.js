@@ -62,27 +62,4 @@ program
   )
   .action(require('./src/actions/extract'));
 
-program
-  .command('get')
-  .description(
-    'gets the value of env.var and if it has "secret" it will return its value from the Key Vault'
-  )
-  .requiredOption(
-    '-e, --env <environment name>',
-    'the name of the environment we are deploying to'
-  )
-  .requiredOption(
-    '-df, --dotenvFolder <paht to the .env.?? files>',
-    'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
-  )
-  .requiredOption(
-    '-v, --varName <the env var name>',
-    'provide the name of the env var that you want ot receive the value back. It must be in the .env files'
-  )
-  .requiredOption(
-    '-kv, --keyvault <Key Vault>',
-    'Key Vault name that contains the secret. If your env var is not a secret just pass "NA"'
-  )
-  .action(require('./src/actions/get'));
-
 program.parse();

@@ -1,13 +1,15 @@
 const path = require('path');
 const fs = require('fs');
 const { dotenvPrep } = require('../dotenv-prep');
+const { extractSecrets, getSecretValue } = require('../secrets');
 
-function extract() {
+async function extract() {
   const options = this.opts();
 
   //this is important for interpolating the env vars in the .env.deploy file
   process.env.env = options.env;
   const currentEnv = process.env.env;
+  const keyVault = options.keyvault;
 
   console.log(`Extracting for environment: ${currentEnv}`);
 
@@ -16,7 +18,21 @@ function extract() {
   const outputFile = options.outputFile;
   console.log('outputFile', outputFile);
 
-  const finalEnv = dotenvPrep(dotenvFolder, currentEnv);
+  let finalEnv = dotenvPrep(dotenvFolder, currentEnv);
+
+  let noSecrets = true;
+
+  if (keyVault) {
+    console.log('Key Vault is provided!');
+    const secrets = extractSecrets(finalEnv);
+    console.log('secrets', secrets);
+    //for each secret await the getSecretValue
+    for (let secret of secrets) {
+      let secretValue = await getSecretValue(secret, keyVault);
+      finalEnv[secret] = secretValue;
+      noSecrets = false;
+    }
+  }
 
   let envContent = '';
   for (let key in finalEnv) {
@@ -24,7 +40,9 @@ function extract() {
     envContent += `${key}=${value}\n`;
   }
 
-  console.log('envContent', envContent);
+  if (noSecrets) {
+    console.log('envContent', envContent);
+  }
 
   fs.writeFileSync(outputFile, envContent);
   console.log(`File "${outputFile}" created!`);
