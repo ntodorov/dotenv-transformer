@@ -29,7 +29,10 @@ async function extract() {
     //for each secret await the getSecretValue
     for (let secret of secrets) {
       let secretValue = await getSecretValue(secret, keyVault);
-      finalEnv[secret] = secretValue;
+      let key = Object.keys(finalEnv).find(
+        (key) => finalEnv[key] === `secret:${secret}`
+      );
+      finalEnv[key] = secretValue;
       noSecrets = false;
     }
   }
