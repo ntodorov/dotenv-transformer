@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const generateCustomEnvYaml = (envVars, serviceName, stagingFolder) => {
+const generateCustomEnvYaml = (envVars, serviceName) => {
   const COMMON_YAML = {
     apiVersion: 'apps/v1',
     kind: 'Deployment',

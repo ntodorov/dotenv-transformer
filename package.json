@@ -1,6 +1,6 @@
 {
   "name": "dotenv-transformer",
-  "version": "3.2.1",
+  "version": "4.0.0",
   "description": "Tool that will get the env vars from .env.deploy and will create secrets.yaml and custom-env.yaml and will check if they exist in a given KeyVault.",
   "main": "index.js",
   "scripts": {

@@ -2,8 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const { dotenvPrep } = require('../dotenv-prep');
 const { generateSecretsYaml } = require('../generate-secret-yaml');
-const { generateCustomEnvYaml } = require('../generate-custom-vars-yaml');
+// const { generateCustomEnvYaml } = require('../generate-custom-vars-yaml');
 const { keyVaultValidation, extractSecrets } = require('../secrets');
+const { updateCustomEnvYaml } = require('../update-custom-vars-yaml');
 
 async function gen() {
   const options = this.opts();
@@ -31,9 +32,14 @@ async function gen() {
   //skip if skipKV is provided
   if (!options.skipKV) await keyVaultValidation(secrets, keyVault);
 
+  const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');
   // first generate in memory the YAML files
   const secretYamlDocs = generateSecretsYaml(secrets, keyVault);
-  const customEnvYamlDocs = generateCustomEnvYaml(finalEnv, serviceName);
+  const customEnvYamlDocs = updateCustomEnvYaml(
+    customEnvYAMLFile,
+    finalEnv,
+    serviceName
+  );
 
   if (!fs.existsSync(destinationPath)) {
     console.error(`Destination folder "${destinationPath}" does not exist!`);
@@ -44,7 +50,7 @@ async function gen() {
   const secretYamlFile = path.join(destinationPath, 'secret.yaml');
   fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
   console.log(`Generated Kubernetes file ${secretYamlFile}`);
-  const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');
+
   fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
   console.log(`Generated Kubernetes file ${customEnvYAMLFile}`);
 
