@@ -9,7 +9,7 @@
 The `dotenv-transformer` is a command-line interface for transforming .env files for different needs, mostly used in devops pipelines.
 It has coommands:
 
-- `gen` - will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files. If you provide a KeyVault name, it will check if the secrets exist in it.
+- `gen` - will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files. If you provide a KeyVault name, it will check if the secrets exist in it. If `custom-env.yaml` already exists, it will only override the env array for the conatainer with the service name.
 
 - `extract` - will read `.env.deploy` and some specific `.env.<env>` filled with overrides and produce final `.env.build` that can be used in the build process - specificaly passing them to docker build task as `--build-arg` parameters.
 

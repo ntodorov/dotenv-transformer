@@ -1,7 +1,8 @@
 const yaml = require('js-yaml');
+const fs = require('fs');
 
 const updateCustomEnvYaml = (customEnvYAMLFile, envVars, serviceName) => {
-  const docs = yaml.loadAll(customEnvYAMLFile);
+  const docs = yaml.loadAll(fs.readFileSync(customEnvYAMLFile, 'utf8'));
 
   const doc = docs.find((doc) => doc.metadata.name === serviceName);
   if (!doc) {
