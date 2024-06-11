@@ -57,6 +57,30 @@ function dotenvPrep(dotenvFolder, currentEnv) {
 
   console.log(`FINAL env.vars:`, finalEnv);
 
+  const internalDeployEnvFile = path.join(dotenvFolder, `.env-internal.deploy`);
+  let internalFinalEnv = null;
+  if (fs.existsSync(internalDeployEnvFile)) {
+    console.log('found internal deploy:', internalDeployEnvFile);
+    internalFinalEnv = {};
+    const internalDeployEnv = dotenv.config({ path: internalDeployEnvFile });
+    console.log('parsed:', internalDeployEnv.parsed);
+    dotenvExpand.expand({
+      processEnv: internalFinalEnv,
+      parsed: internalDeployEnv.parsed,
+    });
+    console.log(
+      `interpolated env.vars from "${internalDeployEnvFile}":`,
+      internalFinalEnv
+    );
+    internalFinalEnv = { ...finalEnv, ...internalFinalEnv };
+  }
+  // const internalEnvFile = path.join(dotenvFolder, `.env-internal.${currentEnv}`);
+
+  if (internalFinalEnv) {
+    console.log(`INTERNAL FINAL env.vars:`, internalFinalEnv);
+    return [finalEnv, internalFinalEnv];
+  }
+
   return finalEnv;
 }
 
