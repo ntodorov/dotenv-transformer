@@ -58,7 +58,9 @@ async function gen() {
   }
 
   //Now write both YAML files
-  const secretYamlFile = path.join(destinationPath, 'secret.yaml');
+  let secretYamlFile = path.join(destinationPath, `secret-${serviceName}.yaml`);
+  if (!fs.existsSync(secretYamlFile))
+    secretYamlFile = path.join(destinationPath, 'secret.yaml');
   fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
   console.log(`Generated Kubernetes file ${secretYamlFile}`);
 
