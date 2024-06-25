@@ -5,6 +5,7 @@ const { generateSecretsYaml } = require('../generate-secret-yaml');
 const { generateCustomEnvYaml } = require('../generate-custom-vars-yaml');
 const { keyVaultValidation, extractSecrets } = require('../secrets');
 const { updateCustomEnvYaml } = require('../update-custom-vars-yaml');
+const { updateSecretYaml } = require('../update-secret-yaml');
 
 async function gen() {
   const options = this.opts();
@@ -36,8 +37,18 @@ async function gen() {
   if (!options.skipKV) await keyVaultValidation(secrets, keyVault);
 
   // first generate in memory the YAML files
-  const secretYamlDocs = generateSecretsYaml(secrets, keyVault);
-
+  let secretYamlDocs = '';
+  let secretAction = '';
+  let secretYamlFile = path.join(destinationPath, `secret-${serviceName}.yaml`);
+  if (!fs.existsSync(secretYamlFile))
+    secretYamlFile = path.join(destinationPath, 'secret.yaml');
+  if (fs.existsSync(secretYamlFile)) {
+    secretYamlDocs = updateSecretYaml(secrets, keyVault, secretYamlFile);
+    secretAction = 'Updated';
+  } else {
+    secretYamlDocs = generateSecretsYaml(secrets, keyVault);
+    secretAction = 'Generated';
+  }
   const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');
   let customEnvYamlDocs = '';
   let action = '';
@@ -58,11 +69,8 @@ async function gen() {
   }
 
   //Now write both YAML files
-  let secretYamlFile = path.join(destinationPath, `secret-${serviceName}.yaml`);
-  if (!fs.existsSync(secretYamlFile))
-    secretYamlFile = path.join(destinationPath, 'secret.yaml');
   fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
-  console.log(`Generated Kubernetes file ${secretYamlFile}`);
+  console.log(`${secretAction} Kubernetes file ${secretYamlFile}`);
 
   fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
   console.log(`${action} Kubernetes file ${customEnvYAMLFile}`);

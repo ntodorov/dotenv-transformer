@@ -9,9 +9,10 @@
 The `dotenv-transformer` is a command-line interface for transforming .env files for different needs, mostly used in devops pipelines.
 It has coommands:
 
-- `gen` - will read environment variables from `.env.deploy` and creates `secrets.yaml` and `custom-env.yaml` files. If you provide a KeyVault name, it will check if the secrets exist in it. If `custom-env.yaml` already exists, it will only override the env array for the container with the service name. If you have second deployment of the same service named "<service>-internal", and you have .env-internal.deploy or .env-internal.<env> file, it will update the document for the internal deployment in `custom-env.yaml` file. This files .env-internal.deploy or .env-internal.<env> file should contain only the overrides for the internal deployment.
+- `gen` - will read environment variables from `.env.deploy` and creates/updates `secrets.yaml` and `custom-env.yaml` files. If you provide a KeyVault name, it will check if the secrets exist in it. If `custom-env.yaml` already exists, it will only override the env array for the container with the service name. If you have second deployment of the same service named "<service>-internal", and you have .env-internal.deploy or .env-internal.<env> file, it will update the document for the internal deployment in `custom-env.yaml` file. This files .env-internal.deploy or .env-internal.<env> file should contain only the overrides for the internal deployment.
 
-Note: If you have a secret-<service name>.yaml file in the destination folder, it will be overwritten instead of the secret.yaml file. This is for cases where more than one service shares the same deployment configurations and needs different secrets.
+Note: If you have a secret-<service name>.yaml file in the destination folder, it will be updated instead of the secret.yaml file. This is for cases where more than one service shares the same deployment configurations and needs different secrets.
+If the secret.yaml does not exist, it will be created.
 
 - `extract` - will read `.env.deploy` and some specific `.env.<env>` filled with overrides and produce final `.env.build` that can be used in the build process - specificaly passing them to docker build task as `--build-arg` parameters.
 
@@ -55,6 +56,7 @@ dotenv-transformer gen -e <environment name> -df <path to the .env.?? files> -s 
 - `-d, --destinationPath <destination path>`: Full folder name to save the yaml files (required)
 - `-kv, --keyvault <Key Vault>`: Key Vault Name needed for secret.yaml and to check if the secrets exist in it
 - `-skv, --skipKV`: (optional) If you want to skip checking for secrets existance in the Key Vault
+- `-u, --update`: (optional) if provided will update the secrets in the secret.yaml if the file exists
 
 #### Command `extract`
 

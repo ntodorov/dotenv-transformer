@@ -35,6 +35,10 @@ program
     '-skv, --skipKV',
     '(optional) if provided will skip the check for the secrets in the Key Vault'
   )
+  .option(
+    '-u, --update',
+    '(optional) if provided will update the secrets in the secret.yaml if the file exists'
+  )
   .action(require('./src/actions/gen'));
 
 program
