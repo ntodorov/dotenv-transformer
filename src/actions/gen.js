@@ -33,8 +33,13 @@ async function gen() {
   const secrets = extractSecrets(finalEnv);
   console.log('secrets', secrets);
 
-  //skip if skipKV is provided
-  if (!options.skipKV) await keyVaultValidation(secrets, keyVault);
+  try {
+    //skip if skipKV is provided
+    if (!options.skipKV) await keyVaultValidation(secrets, keyVault);
+  } catch (error) {
+    console.error('Error validating secrets', error);
+    process.exit(1);
+  }
 
   // first generate in memory the YAML files
   let secretYamlDocs = '';
