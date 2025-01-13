@@ -20,13 +20,16 @@ async function extract() {
 
   const allEnvConfigs = dotenvPrep(dotenvFolder, currentEnv);
 
-  if (Array.isArray(allEnvConfigs))
+  if (allEnvConfigs.internalFinalEnv)
     console.warn(
       'extract does not support .env-internal.xxx files! Only the .env.deploy and .env.<env> will be used!.'
     );
-  const finalEnv = Array.isArray(allEnvConfigs)
-    ? allEnvConfigs[0]
-    : allEnvConfigs;
+  if (allEnvConfigs.supportFinalEnv)
+    console.warn(
+      'extract does not support .env-support.deploy files! Only the .env.deploy and .env.<env> will be used!.'
+    );
+
+  const finalEnv = allEnvConfigs.finalEnv;
 
   let noSecrets = true;
 

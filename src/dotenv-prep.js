@@ -57,6 +57,8 @@ function dotenvPrep(dotenvFolder, currentEnv) {
 
   console.log(`FINAL env.vars:`, finalEnv);
 
+  const result = { finalEnv, internalFinalEnv: null, supportFinalEnv: null };
+
   const internalDeployEnvFile = path.join(dotenvFolder, `.env-internal.deploy`);
   let internalFinalEnv = null;
   if (fs.existsSync(internalDeployEnvFile)) {
@@ -74,14 +76,36 @@ function dotenvPrep(dotenvFolder, currentEnv) {
     );
     internalFinalEnv = { ...finalEnv, ...internalFinalEnv };
   }
-  // const internalEnvFile = path.join(dotenvFolder, `.env-internal.${currentEnv}`);
 
   if (internalFinalEnv) {
     console.log(`INTERNAL FINAL env.vars:`, internalFinalEnv);
-    return [finalEnv, internalFinalEnv];
+    result.internalFinalEnv = internalFinalEnv;
   }
 
-  return finalEnv;
+  const supportDeployEnvFile = path.join(dotenvFolder, `.env-support.deploy`);
+  let supportFinalEnv = null;
+  if (fs.existsSync(supportDeployEnvFile)) {
+    console.log('found support deploy:', supportDeployEnvFile);
+    supportFinalEnv = {};
+    const supportDeployEnv = dotenv.config({ path: supportDeployEnvFile });
+    console.log('parsed:', supportDeployEnv.parsed);
+    dotenvExpand.expand({
+      processEnv: supportFinalEnv,
+      parsed: supportDeployEnv.parsed,
+    });
+    console.log(
+      `interpolated env.vars from "${supportDeployEnvFile}":`,
+      supportFinalEnv
+    );
+    supportFinalEnv = { ...finalEnv, ...supportFinalEnv };
+  }
+
+  if (supportFinalEnv) {
+    console.log(`SUPPORT FINAL env.vars:`, supportFinalEnv);
+    result.supportFinalEnv = supportFinalEnv;
+  }
+
+  return result;
 }
 
 module.exports = { dotenvPrep };

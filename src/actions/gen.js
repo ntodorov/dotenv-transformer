@@ -27,9 +27,7 @@ async function gen() {
 
   const allEnvConfigs = dotenvPrep(dotenvFolder, currentEnv);
 
-  const finalEnv = Array.isArray(allEnvConfigs)
-    ? allEnvConfigs[0]
-    : allEnvConfigs;
+  const { finalEnv, internalFinalEnv, supportFinalEnv } = allEnvConfigs;
   const secrets = extractSecrets(finalEnv);
   console.log('secrets', secrets);
 
@@ -80,8 +78,8 @@ async function gen() {
   fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
   console.log(`${action} Kubernetes file ${customEnvYAMLFile}`);
 
-  if (Array.isArray(allEnvConfigs) && allEnvConfigs[1]) {
-    const internalEnvs = allEnvConfigs[1];
+  if (internalFinalEnv) {
+    const internalEnvs = internalFinalEnv;
     const secrets = extractSecrets(internalEnvs);
     console.log('secrets - internal', secrets);
 
@@ -100,6 +98,33 @@ async function gen() {
       customEnvYamlDocs = generateCustomEnvYaml(
         internalEnvs,
         internalServiceName
+      );
+      action = 'Generated';
+    }
+
+    fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
+    console.log(`${action} Kubernetes file ${customEnvYAMLFile}`);
+  }
+  if (supportFinalEnv) {
+    const supportEnvs = supportFinalEnv;
+    const secrets = extractSecrets(supportEnvs);
+    console.log('secrets - support', secrets);
+
+    const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');
+    let customEnvYamlDocs = '';
+    let action = '';
+    const supportServiceName = `${serviceName}-support`;
+    if (fs.existsSync(customEnvYAMLFile)) {
+      customEnvYamlDocs = updateCustomEnvYaml(
+        customEnvYAMLFile,
+        supportEnvs,
+        supportServiceName
+      );
+      action = 'Updated';
+    } else {
+      customEnvYamlDocs = generateCustomEnvYaml(
+        supportEnvs,
+        supportServiceName
       );
       action = 'Generated';
     }
