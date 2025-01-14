@@ -72,8 +72,11 @@ async function gen() {
   }
 
   //Now write both YAML files
-  fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
-  console.log(`${secretAction} Kubernetes file ${secretYamlFile}`);
+
+  if (secrets.length > 0) {
+    fs.writeFileSync(secretYamlFile, secretYamlDocs, 'utf8');
+    console.log(`${secretAction} Kubernetes file ${secretYamlFile}`);
+  }
 
   fs.writeFileSync(customEnvYAMLFile, customEnvYamlDocs, 'utf8');
   console.log(`${action} Kubernetes file ${customEnvYAMLFile}`);

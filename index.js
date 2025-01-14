@@ -66,4 +66,23 @@ program
   )
   .action(require('./src/actions/extract'));
 
+program
+  .command('update')
+  .description('update the custom-env.yaml file')
+  .alias('u')
+  .requiredOption(
+    '-e, --env <environment name>',
+    'the name of the environment we are deploying to'
+  )
+  .requiredOption(
+    '-df, --dotenvFolder <paht to the .env.?? files>',
+    'path to the folder containing .env.deploy file and/or .env.<environement> specific files'
+  )
+  .requiredOption('-s, --service <service name>', 'the name of the service')
+  .requiredOption(
+    '-d, --destinationPath <destination path>',
+    'full folder name to save the yaml files'
+  )
+  .action(require('./src/actions/update'));
+
 program.parse();
