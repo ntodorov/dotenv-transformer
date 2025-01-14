@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { dotenvPrepForUpdate } = require('../dotenv-prep-for-update');
-const { updateCustomEnvYaml } = require('../update-only-custom-vars-yaml');
+const { upsertCustomEnvYaml } = require('../upsert-custom-vars-yaml');
 
 async function gen() {
   const options = this.opts();
@@ -27,7 +27,7 @@ async function gen() {
   let customEnvYamlDocs = '';
   let action = '';
   if (fs.existsSync(customEnvYAMLFile)) {
-    customEnvYamlDocs = updateCustomEnvYaml(
+    customEnvYamlDocs = upsertCustomEnvYaml(
       customEnvYAMLFile,
       finalEnv,
       serviceName
@@ -49,7 +49,7 @@ async function gen() {
     let customEnvYamlDocs = '';
     const internalServiceName = `${serviceName}-internal`;
     if (fs.existsSync(customEnvYAMLFile)) {
-      customEnvYamlDocs = updateCustomEnvYaml(
+      customEnvYamlDocs = upsertCustomEnvYaml(
         customEnvYAMLFile,
         internalEnvs,
         internalServiceName
@@ -66,7 +66,7 @@ async function gen() {
     let customEnvYamlDocs = '';
     const supportServiceName = `${serviceName}-support`;
     if (fs.existsSync(customEnvYAMLFile)) {
-      customEnvYamlDocs = updateCustomEnvYaml(
+      customEnvYamlDocs = upsertCustomEnvYaml(
         customEnvYAMLFile,
         supportEnvs,
         supportServiceName

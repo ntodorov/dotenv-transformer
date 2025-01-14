@@ -47,3 +47,5 @@ spec:
               value: debug
             - name: SUPPORT
               value: 'true'
+            - name: BLE_BLE
+              value: test
