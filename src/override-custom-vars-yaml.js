@@ -1,7 +1,7 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 
-const updateCustomEnvYaml = (customEnvYAMLFile, envVars, serviceName) => {
+const overrideCustomEnvYaml = (customEnvYAMLFile, envVars, serviceName) => {
   const docs = yaml.loadAll(fs.readFileSync(customEnvYAMLFile, 'utf8'));
 
   const doc = docs.find((doc) => doc.metadata.name === serviceName);
@@ -49,4 +49,4 @@ const updateCustomEnvYaml = (customEnvYAMLFile, envVars, serviceName) => {
   return updatedYaml;
 };
 
-module.exports = { updateCustomEnvYaml };
+module.exports = { overrideCustomEnvYaml };

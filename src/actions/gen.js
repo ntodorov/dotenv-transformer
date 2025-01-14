@@ -4,7 +4,7 @@ const { dotenvPrep } = require('../dotenv-prep');
 const { generateSecretsYaml } = require('../generate-secret-yaml');
 const { generateCustomEnvYaml } = require('../generate-custom-vars-yaml');
 const { keyVaultValidation, extractSecrets } = require('../secrets');
-const { updateCustomEnvYaml } = require('../update-custom-vars-yaml');
+const { overrideCustomEnvYaml } = require('../override-custom-vars-yaml');
 const { updateSecretYaml } = require('../update-secret-yaml');
 
 async function gen() {
@@ -56,7 +56,7 @@ async function gen() {
   let customEnvYamlDocs = '';
   let action = '';
   if (fs.existsSync(customEnvYAMLFile)) {
-    customEnvYamlDocs = updateCustomEnvYaml(
+    customEnvYamlDocs = overrideCustomEnvYaml(
       customEnvYAMLFile,
       finalEnv,
       serviceName
@@ -91,7 +91,7 @@ async function gen() {
     let action = '';
     const internalServiceName = `${serviceName}-internal`;
     if (fs.existsSync(customEnvYAMLFile)) {
-      customEnvYamlDocs = updateCustomEnvYaml(
+      customEnvYamlDocs = overrideCustomEnvYaml(
         customEnvYAMLFile,
         internalEnvs,
         internalServiceName
@@ -118,7 +118,7 @@ async function gen() {
     let action = '';
     const supportServiceName = `${serviceName}-support`;
     if (fs.existsSync(customEnvYAMLFile)) {
-      customEnvYamlDocs = updateCustomEnvYaml(
+      customEnvYamlDocs = overrideCustomEnvYaml(
         customEnvYAMLFile,
         supportEnvs,
         supportServiceName

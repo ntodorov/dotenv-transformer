@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { dotenvPrepForUpdate } = require('../dotenv-prep-for-update');
-const { updateCustomEnvYaml } = require('../update-custom-vars-yaml');
+const { updateCustomEnvYaml } = require('../override-custom-vars-yaml');
 
 async function gen() {
   const options = this.opts();
