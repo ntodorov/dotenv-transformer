@@ -38,13 +38,16 @@ function dotenvPrep(dotenvFolder, currentEnv) {
   }
 
   let dotenvOverrides = {};
-  const processEnv = {};
+  const processEnv = { env: process.env.env };
   if (fs.existsSync(dotEnvFile)) {
     console.log('found env specific:', dotEnvFile);
     dotenvOverrides = dotenv.config({ path: dotEnvFile });
     console.log('parsed:', dotenvOverrides.parsed);
 
     dotenvExpand.expand({ processEnv, parsed: dotenvOverrides.parsed });
+    if (!('env' in dotenvOverrides.parsed)) {
+      delete processEnv.env;
+    }
     console.log(`interpolated env.vars from "${dotEnvFile}":`, processEnv);
   }
 
@@ -63,13 +66,18 @@ function dotenvPrep(dotenvFolder, currentEnv) {
   let internalFinalEnv = null;
   if (fs.existsSync(internalDeployEnvFile)) {
     console.log('found internal deploy:', internalDeployEnvFile);
-    internalFinalEnv = {};
+    internalFinalEnv = { env: process.env.env };
     const internalDeployEnv = dotenv.config({ path: internalDeployEnvFile });
     console.log('parsed:', internalDeployEnv.parsed);
     dotenvExpand.expand({
       processEnv: internalFinalEnv,
       parsed: internalDeployEnv.parsed,
     });
+
+    if (!('env' in internalDeployEnv.parsed)) {
+      delete internalFinalEnv.env;
+    }
+
     console.log(
       `interpolated env.vars from "${internalDeployEnvFile}":`,
       internalFinalEnv
@@ -86,13 +94,16 @@ function dotenvPrep(dotenvFolder, currentEnv) {
   let supportFinalEnv = null;
   if (fs.existsSync(supportDeployEnvFile)) {
     console.log('found support deploy:', supportDeployEnvFile);
-    supportFinalEnv = {};
+    supportFinalEnv = { env: process.env.env };
     const supportDeployEnv = dotenv.config({ path: supportDeployEnvFile });
     console.log('parsed:', supportDeployEnv.parsed);
     dotenvExpand.expand({
       processEnv: supportFinalEnv,
       parsed: supportDeployEnv.parsed,
     });
+    if (!('env' in supportDeployEnv.parsed)) {
+      delete supportFinalEnv.env;
+    }
     console.log(
       `interpolated env.vars from "${supportDeployEnvFile}":`,
       supportFinalEnv
