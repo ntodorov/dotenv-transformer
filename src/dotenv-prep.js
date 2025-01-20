@@ -38,16 +38,19 @@ function dotenvPrep(dotenvFolder, currentEnv) {
   }
 
   let dotenvOverrides = {};
-  const processEnv = { env: process.env.env };
+  let processEnv = {};
   if (fs.existsSync(dotEnvFile)) {
     console.log('found env specific:', dotEnvFile);
+    processEnv = { env: process.env.env };
     dotenvOverrides = dotenv.config({ path: dotEnvFile });
+    if ('env' in dotenvOverrides.parsed)
+      console.warn(
+        '!!! Variable with name "env" is found in dotenvOverrides.parsed - this is NOT ALLOWED! Why? - "env" is used for interpolation in all .env.deploy files and its value comes from the real environment name'
+      );
     console.log('parsed:', dotenvOverrides.parsed);
 
     dotenvExpand.expand({ processEnv, parsed: dotenvOverrides.parsed });
-    if (!('env' in dotenvOverrides.parsed)) {
-      delete processEnv.env;
-    }
+    delete processEnv.env;
     console.log(`interpolated env.vars from "${dotEnvFile}":`, processEnv);
   }
 
