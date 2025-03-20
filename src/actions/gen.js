@@ -24,6 +24,10 @@ async function gen() {
   console.log('dotenvFolder', dotenvFolder);
   const destinationPath = options.destinationPath;
   console.log('destinationPath', destinationPath);
+  const useSecretProvider = options.useSecretProvider;
+  if (useSecretProvider) {
+    console.log('Using SecretProviderClass format for secrets');
+  }
 
   const allEnvConfigs = dotenvPrep(dotenvFolder, currentEnv);
 
@@ -46,10 +50,16 @@ async function gen() {
   if (!fs.existsSync(secretYamlFile))
     secretYamlFile = path.join(destinationPath, 'secret.yaml');
   if (fs.existsSync(secretYamlFile)) {
-    secretYamlDocs = updateSecretYaml(secrets, keyVault, secretYamlFile);
+    secretYamlDocs = updateSecretYaml(
+      secrets,
+      keyVault,
+      secretYamlFile,
+      useSecretProvider,
+      serviceName
+    );
     secretAction = 'Updated';
   } else {
-    secretYamlDocs = generateSecretsYaml(secrets, keyVault);
+    secretYamlDocs = generateSecretsYaml(secrets, keyVault, useSecretProvider);
     secretAction = 'Generated';
   }
   const customEnvYAMLFile = path.join(destinationPath, 'custom-env.yaml');

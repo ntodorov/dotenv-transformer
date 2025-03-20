@@ -39,6 +39,10 @@ program
     '-u, --update',
     '(optional) if provided will update the secrets in the secret.yaml if the file exists'
   )
+  .option(
+    '-usp, --useSecretProvider',
+    '(optional) if provided will use the SecretProviderClass format for the secret.yaml file'
+  )
   .action(require('./src/actions/gen'));
 
 program

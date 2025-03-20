@@ -3,8 +3,11 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const { generateSecret } = require('./generate-secret');
+const {
+  generateSecretsProviderYaml,
+} = require('./generate-secrets-provider-yaml');
 
-const generateSecretsYaml = (secrets, keyVault) => {
+const generateSecretsYamlOLD = (secrets, keyVault) => {
   const k8sSecrets = [];
 
   //for each value in secrets create new k8s secret
@@ -18,6 +21,14 @@ const generateSecretsYaml = (secrets, keyVault) => {
   const allDocs = k8sSecrets.join('---\n');
 
   return allDocs;
+};
+
+const generateSecretsYaml = (secrets, keyVault, useSecretProvider) => {
+  if (useSecretProvider) {
+    return generateSecretsProviderYaml(secrets, keyVault);
+  } else {
+    return generateSecretsYamlOLD(secrets, keyVault);
+  }
 };
 
 module.exports = { generateSecretsYaml };

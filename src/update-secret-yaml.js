@@ -1,8 +1,27 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 const { generateSecret } = require('./generate-secret');
+const { updateSecretProviderYaml } = require('./update-secret-provider');
 
-const updateSecretYaml = (secrets, keyVault, secretYAMLFile) => {
+const updateSecretYaml = (
+  secrets,
+  keyVault,
+  secretYAMLFile,
+  useSecretProvider = false,
+  serviceName = null
+) => {
+  if (useSecretProvider) {
+    if (!serviceName) {
+      throw new Error('serviceName is required when useSecretProvider is true');
+    }
+    return updateSecretProviderYaml(
+      secrets,
+      keyVault,
+      serviceName,
+      secretYAMLFile
+    );
+  }
+
   const docs = yaml.loadAll(fs.readFileSync(secretYAMLFile, 'utf8'));
 
   for (const secret of secrets) {
