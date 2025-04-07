@@ -20,6 +20,16 @@ const updateSecretProviderYaml = (
   if (!doc) {
     docs.push(newDoc);
   } else {
+    // Preserve tenantId and/or clientID if they exist in the current doc
+    if (doc.spec?.parameters) {
+      newDoc.spec.parameters = newDoc.spec.parameters || {};
+      if (doc.spec.parameters.tenantId) {
+        newDoc.spec.parameters.tenantId = doc.spec.parameters.tenantId;
+      }
+      if (doc.spec.parameters.clientID) {
+        newDoc.spec.parameters.clientID = doc.spec.parameters.clientID;
+      }
+    }
     doc.spec = newDoc.spec;
   }
 
