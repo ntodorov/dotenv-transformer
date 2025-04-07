@@ -4,7 +4,7 @@ const generateSecretProvider = (secrets, keyVault, serviceName) => {
     apiVersion: 'secrets-store.csi.x-k8s.io/v1',
     kind: 'SecretProviderClass',
     metadata: {
-      name: `${serviceName}-secrets`,
+      name: serviceName,
     },
     spec: {
       provider: 'azure',

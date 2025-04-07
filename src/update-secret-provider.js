@@ -11,7 +11,11 @@ const updateSecretProviderYaml = (
   const docs = yaml.loadAll(fs.readFileSync(secretProviderYAMLFile, 'utf8'));
 
   const newDoc = generateSecretProvider(secrets, keyVault, serviceName);
-  let doc = docs.find((doc) => doc.metadata.name === `${serviceName}-secrets`);
+  let doc = docs.find(
+    (doc) =>
+      doc.kind === 'SecretProviderClass' &&
+      doc.metadata?.name?.toLowerCase() === serviceName?.toLowerCase()
+  );
 
   if (!doc) {
     docs.push(newDoc);
