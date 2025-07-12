@@ -101,7 +101,11 @@ describe('updateSecretProviderYaml', () => {
   });
 
   it('should preserve existing secrets when updating with partial secret list', () => {
-    const secrets = ['connstr-corpsql', 'connstr-appinsights'];
+    const secrets = [
+      'connstr-corpsql',
+      'connstr-appinsights',
+      'new-test-secret',
+    ];
     const keyVault = 'KV3';
     const serviceName = 'authentication-proxy';
 
@@ -130,15 +134,16 @@ describe('updateSecretProviderYaml', () => {
     expect(secretProvider.kind).toBe('SecretProviderClass');
     expect(secretProvider.spec.provider).toBe('azure');
 
-    // Verify that all three secrets are present (including the existing auth-ingress-htpasswd)
-    expect(secretProvider.spec.secretObjects).toHaveLength(3);
+    // Verify that all four secrets are present (3 existing + 1 new)
+    expect(secretProvider.spec.secretObjects).toHaveLength(4);
 
     const secretNames = secretProvider.spec.secretObjects.map(
       (obj) => obj.secretName
     );
     expect(secretNames).toContain('connstr-corpsql');
     expect(secretNames).toContain('connstr-appinsights');
-    expect(secretNames).toContain('auth-ingress-htpasswd'); // This should still be there
+    expect(secretNames).toContain('auth-ingress-htpasswd'); // This should still be there (preserved)
+    expect(secretNames).toContain('new-test-secret'); // This should be added
 
     // Verify the parameters section includes all secrets
     expect(secretProvider.spec.parameters.keyvaultName).toBe('KV3');
@@ -150,6 +155,9 @@ describe('updateSecretProviderYaml', () => {
     );
     expect(secretProvider.spec.parameters.objects).toContain(
       'objectName: auth-ingress-htpasswd'
+    );
+    expect(secretProvider.spec.parameters.objects).toContain(
+      'objectName: new-test-secret'
     );
 
     // Verify that tenantId and clientID are preserved
