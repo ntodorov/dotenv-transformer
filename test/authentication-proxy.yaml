@@ -1,0 +1,38 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: authentication-proxy
+spec:
+  provider: azure
+  secretObjects:
+    - secretName: connstr-corpsql
+      type: Opaque
+      data:
+        - objectName: connstr-corpsql
+          key: connstr-corpsql
+    - secretName: auth-ingress-htpasswd
+      type: Opaque
+      data:
+        - objectName: auth-ingress-htpasswd
+          key: auth
+    - secretName: connstr-appinsights
+      type: Opaque
+      data:
+        - objectName: connstr-appinsights
+          key: connstr-appinsights
+  parameters:
+    tenantId: aaa
+    clientID: bbb
+    usePodIdentity: 'false'
+    keyvaultName: KV3
+    objects: |-
+      array:
+        - |
+          objectName: connstr-corpsql
+          objectType: secret
+        - |
+          objectName: auth-ingress-htpasswd
+          objectType: secret
+        - |
+          objectName: connstr-appinsights
+          objectType: secret

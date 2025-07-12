@@ -99,4 +99,61 @@ describe('updateSecretProviderYaml', () => {
       'objectName: new-service-secret'
     );
   });
+
+  it('should preserve existing secrets when updating with partial secret list', () => {
+    const secrets = ['connstr-corpsql', 'connstr-appinsights'];
+    const keyVault = 'KV3';
+    const serviceName = 'authentication-proxy';
+
+    const secretProviderYamlFile = path.join(
+      __dirname,
+      '..',
+      'test',
+      'authentication-proxy.yaml'
+    );
+    expect(fs.existsSync(secretProviderYamlFile)).toBe(true);
+
+    const result = updateSecretProviderYaml(
+      secrets,
+      keyVault,
+      serviceName,
+      secretProviderYamlFile
+    );
+
+    // Parse the result YAML to verify the content
+    const resultDocs = yaml.loadAll(result);
+    const secretProvider = resultDocs.find(
+      (doc) => doc.metadata.name === 'authentication-proxy'
+    );
+
+    expect(secretProvider).toBeDefined();
+    expect(secretProvider.kind).toBe('SecretProviderClass');
+    expect(secretProvider.spec.provider).toBe('azure');
+
+    // Verify that all three secrets are present (including the existing auth-ingress-htpasswd)
+    expect(secretProvider.spec.secretObjects).toHaveLength(3);
+
+    const secretNames = secretProvider.spec.secretObjects.map(
+      (obj) => obj.secretName
+    );
+    expect(secretNames).toContain('connstr-corpsql');
+    expect(secretNames).toContain('connstr-appinsights');
+    expect(secretNames).toContain('auth-ingress-htpasswd'); // This should still be there
+
+    // Verify the parameters section includes all secrets
+    expect(secretProvider.spec.parameters.keyvaultName).toBe('KV3');
+    expect(secretProvider.spec.parameters.objects).toContain(
+      'objectName: connstr-corpsql'
+    );
+    expect(secretProvider.spec.parameters.objects).toContain(
+      'objectName: connstr-appinsights'
+    );
+    expect(secretProvider.spec.parameters.objects).toContain(
+      'objectName: auth-ingress-htpasswd'
+    );
+
+    // Verify that tenantId and clientID are preserved
+    expect(secretProvider.spec.parameters.tenantId).toBe('aaa');
+    expect(secretProvider.spec.parameters.clientID).toBe('bbb');
+  });
 });
