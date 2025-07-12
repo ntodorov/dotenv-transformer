@@ -5,6 +5,9 @@
 cd ..
 cd ..
 
+# this is needed because <service>-internal document will not be generated if does not exists.
+cp ./examples/case2-internal-service/expected/custom-env.yaml ./examples/case2-internal-service/generated/custom-env.yaml
+
 # run the script to generate the files
 npx dotenv-transformer gen -e dev -df ./examples/case2-internal-service  -s data-publisher  -d ./examples/case2-internal-service/generated -kv Test1KV -skv
 
