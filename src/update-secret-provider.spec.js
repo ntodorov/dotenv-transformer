@@ -28,7 +28,7 @@ describe('updateSecretProviderYaml', () => {
     // Parse the result YAML to verify the content
     const resultDocs = yaml.loadAll(result);
     const secretProvider = resultDocs.find(
-      (doc) => doc.metadata.name === 'test-service-secrets'
+      (doc) => doc.metadata.name === 'test-service'
     );
 
     expect(secretProvider).toBeDefined();
@@ -75,13 +75,13 @@ describe('updateSecretProviderYaml', () => {
 
     // Should still have the original document
     const originalProvider = resultDocs.find(
-      (doc) => doc.metadata.name === 'test-service-secrets'
+      (doc) => doc.metadata.name === 'test-service'
     );
     expect(originalProvider).toBeDefined();
 
     // Should have the new document
     const newProvider = resultDocs.find(
-      (doc) => doc.metadata.name === 'new-service-secrets'
+      (doc) => doc.metadata.name === 'new-service'
     );
     expect(newProvider).toBeDefined();
     expect(newProvider.kind).toBe('SecretProviderClass');
