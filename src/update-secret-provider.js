@@ -22,31 +22,55 @@ const updateSecretProviderYaml = (
     docs.push(newDoc);
   } else {
     // If document exists, merge existing secrets with new ones
-    const existingSecrets =
-      doc.spec?.secretObjects?.map((obj) => obj.secretName) || [];
+    const existingSecrets = doc.spec?.secretObjects || [];
+    const existingSecretNames = existingSecrets.map((obj) => obj.secretName);
 
     // Create a Set to avoid duplicates, then convert back to array
-    const mergedSecrets = [...new Set([...existingSecrets, ...secrets])];
+    const mergedSecretNames = [
+      ...new Set([...existingSecretNames, ...secrets]),
+    ];
 
-    // Generate new spec with merged secrets
-    const newDoc = generateSecretProvider(mergedSecrets, keyVault, serviceName);
+    // Build the merged secret objects, preserving existing structures
+    const mergedSecretObjects = [];
 
-    // Preserve existing parameters (tenantId, clientID, etc.)
-    if (doc.spec?.parameters) {
-      newDoc.spec.parameters = newDoc.spec.parameters || {};
-
-      // Preserve all existing parameters
-      Object.keys(doc.spec.parameters).forEach((key) => {
-        if (key !== 'keyvaultName' && key !== 'objects') {
-          // Keep existing values for all parameters except keyvaultName and objects
-          // which should be updated with new values
-          newDoc.spec.parameters[key] = doc.spec.parameters[key];
-        }
-      });
+    for (const secretName of mergedSecretNames) {
+      const existingSecret = existingSecrets.find(
+        (obj) => obj.secretName === secretName
+      );
+      if (existingSecret) {
+        // Preserve the existing secret object structure
+        mergedSecretObjects.push(existingSecret);
+      } else {
+        // Create a new secret object for new secrets
+        mergedSecretObjects.push({
+          secretName: secretName,
+          type: 'Opaque',
+          data: [
+            {
+              objectName: secretName,
+              key: secretName,
+            },
+          ],
+        });
+      }
     }
 
+    // Generate the objects string for parameters
+    const objectsString = `array:\n${mergedSecretNames
+      .map(
+        (secret) =>
+          `        - |\n          objectName: ${secret}\n          objectType: secret`
+      )
+      .join('\n')}`;
+
     // Update the document spec
-    doc.spec = newDoc.spec;
+    doc.spec.secretObjects = mergedSecretObjects;
+    doc.spec.parameters = doc.spec.parameters || {};
+    doc.spec.parameters.keyvaultName = keyVault;
+    doc.spec.parameters.objects = objectsString;
+
+    // Preserve other existing parameters if they exist
+    // (tenantId, clientID, usePodIdentity, etc. are already preserved)
   }
 
   const updatedYaml = docs.map((doc) => yaml.dump(doc)).join('---\n');

@@ -145,6 +145,13 @@ describe('updateSecretProviderYaml', () => {
     expect(secretNames).toContain('auth-ingress-htpasswd'); // This should still be there (preserved)
     expect(secretNames).toContain('new-test-secret'); // This should be added
 
+    // Verify that the auth-ingress-htpasswd secret preserves its custom key mapping
+    const authIngressSecret = secretProvider.spec.secretObjects.find(
+      (obj) => obj.secretName === 'auth-ingress-htpasswd'
+    );
+    expect(authIngressSecret).toBeDefined();
+    expect(authIngressSecret.data[0].key).toBe('auth'); // Should preserve the custom key 'auth'
+
     // Verify the parameters section includes all secrets
     expect(secretProvider.spec.parameters.keyvaultName).toBe('KV3');
     expect(secretProvider.spec.parameters.objects).toContain(
