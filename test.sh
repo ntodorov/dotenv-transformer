@@ -111,6 +111,8 @@ run_test_case "case4-internal-and-support" "./examples/case4-internal-and-suppor
 run_test_case "case5-only-support-service" "./examples/case5-only-support-service" "-usp"
 run_test_case "case6-SP-internal-and-support" "./examples/case6-SP-internal-and-support" "-usp"
 
+sleep 5
+
 # Verify git status is still clean
 verify_git_status_clean
 
