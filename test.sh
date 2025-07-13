@@ -25,6 +25,8 @@ run_test_case() {
         # Compare the files content
         if diff -r "$case_dir/generated" "$case_dir/expected" -x ".keepme"; then
             echo "Files are identical for $case_name"
+            echo "Removing generated files"
+            find "$case_dir/generated" -type f ! -name ".keepme" -delete
         else
             echo "Files are different for $case_name"
             exit 1
