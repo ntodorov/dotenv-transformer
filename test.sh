@@ -83,19 +83,32 @@ check_git_status
 verify_git_status_clean() {
     echo "Verifying git status is still clean after tests..."
     
+    # Debug: Show what git commands are returning
+    echo "Debug: git diff-index output:"
+    git diff-index HEAD -- || echo "git diff-index returned non-zero exit code"
+    
+    echo "Debug: git status --porcelain output:"
+    git status --porcelain
+    
+    echo "Debug: git ls-files --others --exclude-standard output:"
+    git ls-files --others --exclude-standard
+    
     # Check if working tree is clean
     if ! git diff-index --quiet HEAD --; then
         echo "ERROR: Git working tree is not clean after tests. Tests may have left artifacts behind."
-        echo "Modified files:"
+        echo "Modified files (git status --porcelain):"
         git status --porcelain
+        echo "Modified files (git diff-index):"
+        git diff-index HEAD --
         exit 1
     fi
     
     # Check for untracked files
-    if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    untracked_files=$(git ls-files --others --exclude-standard)
+    if [ -n "$untracked_files" ]; then
         echo "ERROR: There are untracked files after tests. Tests may have left artifacts behind."
         echo "Untracked files:"
-        git ls-files --others --exclude-standard
+        echo "$untracked_files"
         exit 1
     fi
     
