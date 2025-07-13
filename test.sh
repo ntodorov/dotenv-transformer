@@ -79,6 +79,30 @@ run_test_case() {
 # Check git status before running tests
 check_git_status
 
+# Function to verify git status is still clean after tests
+verify_git_status_clean() {
+    echo "Verifying git status is still clean after tests..."
+    
+    # Check if working tree is clean
+    if ! git diff-index --quiet HEAD --; then
+        echo "ERROR: Git working tree is not clean after tests. Tests may have left artifacts behind."
+        echo "Modified files:"
+        git status --porcelain
+        exit 1
+    fi
+    
+    # Check for untracked files
+    if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+        echo "ERROR: There are untracked files after tests. Tests may have left artifacts behind."
+        echo "Untracked files:"
+        git ls-files --others --exclude-standard
+        exit 1
+    fi
+    
+    echo "Git working tree is still clean. Tests properly cleaned up after themselves."
+    echo "----------------------------------------"
+}
+
 # Run all test cases
 run_test_case "case1-single-service" "./examples/case1-single-service"
 run_test_case "case2-internal-service" "./examples/case2-internal-service"
@@ -87,5 +111,7 @@ run_test_case "case4-internal-and-support" "./examples/case4-internal-and-suppor
 run_test_case "case5-only-support-service" "./examples/case5-only-support-service" "-usp"
 run_test_case "case6-SP-internal-and-support" "./examples/case6-SP-internal-and-support" "-usp"
 
-echo "All test cases completed successfully!"
-echo "Verify that git status is still clean to confirm tests didn't leave any artifacts behind." 
+# Verify git status is still clean
+verify_git_status_clean
+
+echo "All test cases completed successfully!" 
