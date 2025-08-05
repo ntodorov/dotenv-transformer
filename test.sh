@@ -123,6 +123,7 @@ run_test_case "case3-support-service" "./examples/case3-support-service"
 run_test_case "case4-internal-and-support" "./examples/case4-internal-and-support"
 run_test_case "case5-only-support-service" "./examples/case5-only-support-service" "-usp"
 run_test_case "case6-SP-internal-and-support" "./examples/case6-SP-internal-and-support" "-usp"
+run_test_case "case7-support-service-no-env-support" "./examples/case7-support-service-no-env-support"
 
 
 # Verify git status is still clean
