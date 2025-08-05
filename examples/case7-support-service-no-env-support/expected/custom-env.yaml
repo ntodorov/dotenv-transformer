@@ -20,9 +20,9 @@ spec:
                   name: jd-password
                   key: jd-password
             - name: LOG_LEVEL
-              value: debug
+              value: info
             - name: KAFKA_TOPIC1
-              value: topic1rp.dev.topic1
+              value: rp.dev.topic1
 ---
 apiVersion: apps/v1
 kind: Deployment
